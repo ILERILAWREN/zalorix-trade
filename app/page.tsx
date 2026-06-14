@@ -1824,7 +1824,18 @@ function AppInner(){
       <TickerRibbon />
       <div style={{flex:1,display:"flex",overflow:"hidden"}}>
       {/* SIDEBAR */}
-      <div style={{width:226,background:T.navBg,borderRight:`1px solid ${T.navBorder}`,display:"flex",flexDirection:"column",flexShrink:0}}>
+      <div
+  style={{
+    width: sidebarOpen ? 226 : 0,
+    overflow: "hidden",
+    background: T.navBg,
+    borderRight: `1px solid ${T.navBorder}`,
+    display: "flex",
+    flexDirection: "column",
+    flexShrink: 0,
+    transition: "all 0.3s ease"
+  }}
+>
         <div style={{padding:"24px 20px 18px",borderBottom:`1px solid ${T.navBorder}`}}>
           <div style={{fontSize:18,fontWeight:800,letterSpacing:"0.02em",color:"#fff"}}>ZALORIX</div>
           <div style={{fontSize:9,color:"rgba(255,255,255,0.35)",letterSpacing:"0.18em",marginTop:3}}>GLOBAL TRADE NETWORK</div>
@@ -1872,7 +1883,26 @@ function AppInner(){
       <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
         {/* Top bar */}
         <div style={{height:60,background:T.topBarBg,borderBottom:`1px solid ${T.topBarBorder}`,display:"flex",alignItems:"center",padding:"0 22px",gap:12,flexShrink:0}}>
-          <div style={{flex:1,position:"relative",maxWidth:440}}><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search listings, providers, categories…" style={{...inputSt,padding:"7px 13px 7px 36px"}} /><span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:T.mutedText,fontSize:14}}>🔍</span></div>
+          <>
+  {user && (
+    <button
+      onClick={()=>setSidebarOpen(!sidebarOpen)}
+      style={{
+        background:"green",
+        border:"none",
+        borderRadius:8,
+        color:"#fff",
+        padding:"7px 12px",
+        cursor:"pointer",
+        fontSize:18,
+        fontWeight:700
+      }}
+    >
+      ☰
+    </button>
+  )}
+
+  <div style={{flex:1,position:"relative",maxWidth:440}}><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search listings, providers, categories…" style={{...inputSt,padding:"7px 13px 7px 36px"}} /><span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:T.mutedText,fontSize:14}}>🔍</span></div></>
           {user&&<div style={{display:"flex",alignItems:"center",gap:5,background:T.accentLight,border:`1px solid ${T.accentBorder}`,borderRadius:8,padding:"5px 11px",fontSize:12}}><span style={{color:T.accent,fontWeight:800}}>{userCC?.currency}</span><span style={{color:T.mutedText,fontSize:10}}>{user.country}</span></div>}
           {user&&<button onClick={()=>setShowBroadcast(true)} style={{background:T.navBg,border:"none",borderRadius:8,padding:"7px 14px",color:"#fff",cursor:"pointer",fontSize:12,fontWeight:600,whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:5}}><span style={{fontSize:11}}>✦</span>Post</button>}
           <div style={{position:"relative"}}>
