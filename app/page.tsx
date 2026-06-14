@@ -1812,7 +1812,7 @@ function AppInner(){
   const [checkoutListing,setCheckoutListing]=useState(null);
   const [activeOrder,setActiveOrder]=useState(null);
   const [notifOpen,setNotifOpen]=useState(false);
-
+  const [sidebarOpen,setSidebarOpen]=useState(false);
   const userCC=user?COUNTRIES.find(c=>c.code===user.country):null;
   const unread=state.conversations.reduce((a,c)=>a+(c.unread||0),0);
 
@@ -1831,7 +1831,31 @@ function AppInner(){
         </div>
         <nav style={{flex:1,padding:"12px 10px",overflowY:"auto"}}>
           {NAV.map(n=>(
-            <button key={n.id} onClick={()=>setNav(n.id)} style={{display:"flex",alignItems:"center",gap:10,width:"100%",padding:"10px 12px",background:activeNav===n.id?T.navActive:"transparent",border:"none",borderRadius:8,color:activeNav===n.id?"#fff":T.navText,cursor:"pointer",fontSize:13,fontWeight:activeNav===n.id?600:400,marginBottom:2,transition:"all 0.15s",textAlign:"left",position:"relative"}}>
+  <button
+    key={n.id}
+    onClick={() => {
+      setNav(n.id);
+      setSidebarOpen(false);
+    }}
+    style={{
+      display:"flex",
+      alignItems:"center",
+      gap:10,
+      width:"100%",
+      padding:"10px 12px",
+      background:activeNav===n.id?T.navActive:"transparent",
+      border:"none",
+      borderRadius:8,
+      color:activeNav===n.id?"#fff":T.navText,
+      cursor:"pointer",
+      fontSize:13,
+      fontWeight:activeNav===n.id?600:400,
+      marginBottom:2,
+      transition:"all 0.15s",
+      textAlign:"left",
+      position:"relative"
+    }}
+  >
               <span style={{fontSize:14,opacity:activeNav===n.id?1:0.7}}>{n.icon}</span>{n.label}
               {n.id==="messages"&&unread>0&&<span style={{marginLeft:"auto",background:"#ef4444",color:"#fff",borderRadius:99,fontSize:9,padding:"1px 5px",fontWeight:800}}>{unread}</span>}
             </button>
