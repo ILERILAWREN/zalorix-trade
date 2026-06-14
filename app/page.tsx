@@ -75,7 +75,7 @@ function TickerRibbon(){
 // ══════════════════════════════════════════════════════════════
 // LIVE TOAST NOTIFICATION ENGINE
 // ══════════════════════════════════════════════════════════════
-function LiveToastStack({onViewRadar,onNewRequest}){
+function LiveToastStack({onViewRadar,onNewRequest}){onViewRadar:()=>void;onNewRequest:(req: any)=> void;}){
   const [toasts,setToasts]=useState([]);
   const timerRef=useRef();
 
