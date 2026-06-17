@@ -1800,7 +1800,7 @@ function InlineChatPanel({listingId,onClose}){
   );
 }
 
-// ══════════════════════════════════════════════════════════════
+
 // ROOT APP
 // ══════════════════════════════════════════════════════════════
 function AppInner(){
@@ -1812,7 +1812,19 @@ function AppInner(){
   const [checkoutListing,setCheckoutListing]=useState(null);
   const [activeOrder,setActiveOrder]=useState(null);
   const [notifOpen,setNotifOpen]=useState(false);
+  const [isMobile,setIsMobile]=useState(false);
   const [sidebarOpen,setSidebarOpen]=useState(false);
+
+  useEffect(() => {
+  const checkMobile = () => {
+    setIsMobile(window.innerWidth <= 768);
+  };
+
+  checkMobile();
+  window.addEventListener("resize", checkMobile);
+
+  return () => window.removeEventListener("resize", checkMobile);
+}, []);
   const userCC=user?COUNTRIES.find(c=>c.code===user.country):null;
   const unread=state.conversations.reduce((a,c)=>a+(c.unread||0),0);
 
@@ -1824,7 +1836,18 @@ function AppInner(){
       <TickerRibbon />
       <div style={{flex:1,display:"flex",overflow:"hidden"}}>
       {/* SIDEBAR */}
-      <div style={{width:226,background:T.navBg,borderRight:`1px solid ${T.navBorder}`,display:"flex",flexDirection:"column",flexShrink:0}}>
+      <div
+  style={{
+    width:isMobile ? (sidebarOpen ? 226 : 0) : 226,
+    overflow:"hidden",
+    background:T.navBg,
+    borderRight:`1px solid ${T.navBorder}`,
+    display:"flex",
+    flexDirection:"column",
+    flexShrink:0,
+    transition:"width .25s ease"
+  }}
+>
         <div style={{padding:"24px 20px 18px",borderBottom:`1px solid ${T.navBorder}`}}>
           <div style={{fontSize:18,fontWeight:800,letterSpacing:"0.02em",color:"#fff"}}>ZALORIX</div>
           <div style={{fontSize:9,color:"rgba(255,255,255,0.35)",letterSpacing:"0.18em",marginTop:3}}>GLOBAL TRADE NETWORK</div>
@@ -1871,19 +1894,52 @@ function AppInner(){
       {/* MAIN */}
       <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
         {/* Top bar */}
-        <div style={{height:60,background:T.topBarBg,borderBottom:`1px solid ${T.topBarBorder}`,display:"flex",alignItems:"center",padding:"0 22px",gap:12,flexShrink:0}}>
-          <div style={{flex:1,position:"relative",maxWidth:440}}><input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search listings, providers, categories…" style={{...inputSt,padding:"7px 13px 7px 36px"}} /><span style={{position:"absolute",left:12,top:"50%",transform:"translateY(-50%)",color:T.mutedText,fontSize:14}}>🔍</span></div>
-          {user&&<div style={{display:"flex",alignItems:"center",gap:5,background:T.accentLight,border:`1px solid ${T.accentBorder}`,borderRadius:8,padding:"5px 11px",fontSize:12}}><span style={{color:T.accent,fontWeight:800}}>{userCC?.currency}</span><span style={{color:T.mutedText,fontSize:10}}>{user.country}</span></div>}
-          {user&&<button onClick={()=>setShowBroadcast(true)} style={{background:T.navBg,border:"none",borderRadius:8,padding:"7px 14px",color:"#fff",cursor:"pointer",fontSize:12,fontWeight:600,whiteSpace:"nowrap",display:"flex",alignItems:"center",gap:5}}><span style={{fontSize:11}}>✦</span>Post</button>}
-          <div style={{position:"relative"}}>
-            <button onClick={()=>setNotifOpen(o=>!o)} style={{background:T.inputBg,border:`1px solid ${T.cardBorder}`,borderRadius:8,padding:"7px 13px",color:T.headText,cursor:"pointer",fontSize:13,display:"flex",alignItems:"center",gap:5}}>🔔<span style={{background:T.red,color:"#fff",borderRadius:99,fontSize:9,padding:"1px 5px",fontWeight:700}}>3</span></button>
-            {notifOpen&&<div style={{position:"absolute",right:0,top:44,width:290,background:T.cardBg,border:`1px solid ${T.cardBorder}`,borderRadius:11,zIndex:100,padding:10,boxShadow:"0 8px 32px rgba(15,44,35,0.12)"}}>{["3 new offers on your broadcast","Vendor responded to your inquiry","New match in Global Explorer"].map((n,i)=><div key={i} style={{padding:"8px 11px",borderRadius:7,marginBottom:5,background:T.inputBg,fontSize:12,color:T.bodyText,borderLeft:`3px solid ${T.accent}`}}>{n}</div>)}</div>}
-          </div>
-          {user?<div style={{display:"flex",alignItems:"center",gap:7}}><span style={{fontSize:15}}>{FLAGS[user.country]||"🌐"}</span><div style={{width:32,height:32,borderRadius:"50%",background:T.navBg,display:"flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:700,color:"#fff",cursor:"pointer",border:`2px solid ${T.accentBorder}`}} onClick={()=>setUser(null)} title="Sign out">{user.name.slice(0,2).toUpperCase()}</div></div>:<button onClick={()=>setAuthMode("signup")} style={{background:T.navBg,border:"none",borderRadius:8,padding:"7px 16px",color:"#fff",fontSize:12,fontWeight:700,cursor:"pointer"}}>Join Now</button>}
-        </div>
+        {/* Top bar */}
+<div style={{height:60,background:T.topBarBg,borderBottom:`1px solid ${T.topBarBorder}`,display:"flex",alignItems:"center",padding:"0 22px",gap:12,flexShrink:0}}>
 
-        {/* Content */}
-        <div style={{flex:1,overflowY:activeNav==="about"?"hidden":"auto",padding:activeNav==="about"?0:22,display:"flex",gap:18}}>
+  {isMobile && (
+    <button
+      onClick={() => setSidebarOpen(!sidebarOpen)}
+      style={{
+        background:T.navBg,
+        border:"none",
+        borderRadius:8,
+        color:"#fff",
+        padding:"8px 12px",
+        cursor:"pointer",
+        fontSize:18,
+        fontWeight:700
+      }}
+    >
+      ☰
+    </button>
+  )}
+
+  <div style={{flex:1,position:"relative",maxWidth:440}}>
+    <input
+      value={search}
+      onChange={e=>setSearch(e.target.value)}
+      placeholder="Search listings, providers, categories…"
+      style={{...inputSt,padding:"7px 13px 7px 36px"}}
+    />
+    <span
+      style={{
+        position:"absolute",
+        left:12,
+        top:"50%",
+        transform:"translateY(-50%)",
+        color:T.mutedText,
+        fontSize:14
+      }}
+    >
+      🔍
+    </span>
+  </div>
+
+</div>
+
+{/* Content */}
+<div style={{flex:1,overflowY:activeNav==="about"?"hidden":"auto",padding:activeNav==="about"?0:22,display:"flex",gap:18}}>
           {activeNav==="feed"&&<FeedView />}
           {activeNav==="explorer"&&<ExplorerView onBuy={l=>user?setCheckoutListing(l):setAuthMode("signup")} onChat={id=>setChatId(id)} />}
           {activeNav==="radar"&&<TradeRadarView />}
